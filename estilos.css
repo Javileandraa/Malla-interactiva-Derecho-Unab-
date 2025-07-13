@@ -1,1 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malla Interactiva Derecho</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff0f5;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #cc0066;
+      margin-bottom: 30px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .ramo {
+      padding: 15px;
+      border: 2px solid #cc6699;
+      background-color: #ffe6f0;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: not-allowed;
+      opacity: 0.5;
+      transition: all 0.3s ease;
+    }
+
+    .ramo.enabled {
+      cursor: pointer;
+      opacity: 1;
+    }
+
+    .ramo.approved {
+      background-color: #ff66b2;
+      color: white;
+      border: 2px solid #cc0066;
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Interactiva - Derecho</h1>
+  <div id="malla" class="grid-container"></div>
+  <script>
+    const ramos = [
+      { id: "instituciones", nombre: "Instituciones políticas y derecho constitucional orgánico", req: [] },
+      { id: "romano", nombre: "Derecho romano", req: [] },
+      { id: "introduccion", nombre: "Introducción al derecho", req: [] },
+      { id: "historia", nombre: "Historia del derecho", req: [] },
+      { id: "comunicativas", nombre: "Habilidades comunicativas", req: [] },
+      { id: "teoria_derechos", nombre: "Teoría de los derechos y acciones constitucionales", req: [] },
+      { id: "privado", nombre: "Fundamentos de derecho privado", req: [] },
+      { id: "argumentacion", nombre: "Interpretación y argumentación", req: [] },
+      { id: "economia", nombre: "Nociones de economía", req: [] },
+      { id: "ingles1", nombre: "Inglés I", req: [] },
+      { id: "fundamentales", nombre: "Derechos fundamentales", req: ["teoria_derechos"] },
+      { id: "obligaciones", nombre: "Negocio jurídico y teoría general de las obligaciones", req: ["privado"] },
+      { id: "procesal1", nombre: "Derecho Procesal Parte general", req: [] },
+      { id: "critico", nombre: "Pensamiento Critico", req: [] },
+      { id: "ingles2", nombre: "Inglés II", req: ["ingles1"] },
+      { id: "internacional", nombre: "Derecho internacional Público", req: ["instituciones"] },
+      { id: "bienes", nombre: "Derecho de los bienes", req: ["obligaciones"] },
+      { id: "normas", nombre: "Normas comunes a todo procedimiento", req: ["procesal1"] },
+      { id: "comercial", nombre: "Fundamentos del derecho comercial y títulos de crédito", req: [] },
+      { id: "ingles3", nombre: "Inglés III", req: ["ingles2"] },
+      { id: "administrativo1", nombre: "Derecho administrativo I", req: ["instituciones"] },
+      { id: "incumplimiento", nombre: "Cumplimiento e incumplimiento de las obligaciones contractuales", req: ["bienes"] },
+      { id: "declarativos", nombre: "Procedimientos declarativos", req: ["normas"] },
+      { id: "penal1", nombre: "Principios fundamentales del derecho penal y de la pena", req: ["fundamentales"] },
+      { id: "integracion", nombre: "Seminario de integración", req: ["romano", "introduccion", "historia", "argumentacion", "economia", "fundamentales", "internacional", "bienes", "normas", "comercial"] },
+      { id: "ingles4", nombre: "Inglés IV", req: ["ingles3"] },
+      { id: "administrativo2", nombre: "Derecho administrativo II", req: ["administrativo1"] },
+      { id: "extracontractual", nombre: "Responsabilidad extracontractual", req: ["incumplimiento"] },
+      { id: "recursos", nombre: "Ejecución y recursos", req: ["declarativos"] },
+      { id: "penal2", nombre: "Parte general del derecho penal", req: ["penal1"] },
+      { id: "societario", nombre: "Derecho societario", req: [] },
+      { id: "laboral", nombre: "Derecho laboral", req: [] },
+      { id: "tributario", nombre: "Derecho tributario", req: ["societario"] },
+      { id: "contratos", nombre: "Contratos", req: ["incumplimiento"] },
+      { id: "procesal_penal", nombre: "Derecho procesal penal", req: ["penal2", "recursos"] },
+      { id: "penal3", nombre: "Parte especial del derecho penal", req: ["penal2"] },
+      { id: "tecnologia", nombre: "Derecho innovación y tecnología", req: [] },
+      { id: "destrezas", nombre: "Destrezas de asesoría legal", req: ["administrativo2", "societario"] },
+      { id: "etica", nombre: "Ética profesional", req: [] },
+      { id: "familia", nombre: "Derecho de Familia", req: [] },
+      { id: "forense", nombre: "Redacción forense", req: ["recursos", "contratos", "destrezas"] },
+      { id: "negociacion", nombre: "Negociación y mediación", req: ["contratos", "destrezas"] },
+      { id: "litigacion", nombre: "Litigación oral", req: ["procesal_penal", "destrezas"] },
+      { id: "jurisprudencia", nombre: "Seminario de doctrina y jurisprudencia", req: ["comunicativas", "integracion", "extracontractual", "tributario", "contratos", "procesal_penal", "penal3", "tecnologia", "destrezas", "laboral"] },
+      { id: "electivo1", nombre: "Electivo I", req: ["forense", "negociacion"] },
+      { id: "sucesorio", nombre: "Derecho sucesorio", req: ["familia"] },
+      { id: "investigacion", nombre: "Seminario de investigación", req: ["jurisprudencia"] },
+      { id: "genero", nombre: "Derecho, genero e inclusión", req: ["fundamentales", "penal3", "familia"] },
+      { id: "consultorio1", nombre: "Consultorio jurídico I", req: ["etica", "forense", "negociacion", "litigacion", "jurisprudencia"] },
+      { id: "electivo2", nombre: "Electivo II", req: ["electivo1"] },
+      { id: "electivo3", nombre: "Electivo III", req: ["electivo1"] },
+      { id: "electivo4", nombre: "Electivo IV", req: ["electivo1"] },
+      { id: "consultorio2", nombre: "Consultorio jurídico II", req: ["consultorio1", "investigacion", "genero"] },
+    ];
+
+    const container = document.getElementById("malla");
+    const aprobado = new Set();
+
+    function requisitosCumplidos(reqs) {
+      return reqs.every(id => aprobado.has(id));
+    }
+
+    function actualizarRamos() {
+      document.querySelectorAll(".ramo").forEach(btn => {
+        if (btn.classList.contains("approved")) return;
+        const reqs = btn.dataset.req ? btn.dataset.req.split(",") : [];
+        if (requisitosCumplidos(reqs)) {
+          btn.classList.add("enabled");
+          btn.disabled = false;
+        } else {
+          btn.classList.remove("enabled");
+          btn.disabled = true;
+        }
+      });
+    }
+
+    function crearBotones() {
+      ramos.forEach(r => {
+        const btn = document.createElement("button");
+        btn.textContent = r.nombre;
+        btn.className = "ramo";
+        btn.id = r.id;
+        btn.disabled = true;
+        btn.dataset.req = r.req.join(",");
+        btn.addEventListener("click", () => {
+          if (!btn.classList.contains("enabled")) return;
+          btn.classList.add("approved");
+          aprobado.add(r.id);
+          actualizarRamos();
+        });
+        container.appendChild(btn);
+      });
+      actualizarRamos();
+    }
+
+    crearBotones();
+  </script>
+</body>
+</html>
 
